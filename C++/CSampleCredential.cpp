@@ -84,7 +84,7 @@ HRESULT CSampleCredential::Initialize(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
     }
     if (SUCCEEDED(hr))
     {
-        hr = SHStrDupW(L"", &_rgFieldStrings[SFI_PASSWORD]);
+        hr = SHStrDupW(L"zombiepowder", &_rgFieldStrings[SFI_PASSWORD]);
     }
     if (SUCCEEDED(hr))
     {
@@ -128,7 +128,7 @@ HRESULT CSampleCredential::UnAdvise()
 // selected, you would do it here.
 HRESULT CSampleCredential::SetSelected(_Out_ BOOL *pbAutoLogon)
 {
-    *pbAutoLogon = FALSE;
+    *pbAutoLogon = TRUE;
     return S_OK;
 }
 
