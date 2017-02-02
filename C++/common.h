@@ -21,8 +21,7 @@ enum SAMPLE_FIELD_ID
     SFI_TILEIMAGE         = 0,
     SFI_LABEL             = 1,
     SFI_LARGE_TEXT        = 2,
-    SFI_PASSWORD          = 3,
-    SFI_NUM_FIELDS        = 4,  // Note: if new fields are added, keep NUM_FIELDS last.  This is used as a count of the number of fields
+    SFI_NUM_FIELDS        = 3,  // Note: if new fields are added, keep NUM_FIELDS last.  This is used as a count of the number of fields
 };
 
 // The first value indicates when the tile is displayed (selected, not selected)
@@ -45,7 +44,6 @@ static const FIELD_STATE_PAIR s_rgFieldStatePairs[] =
     { CPFS_DISPLAY_IN_BOTH,            CPFIS_NONE    },    // SFI_TILEIMAGE
     { CPFS_HIDDEN,                     CPFIS_NONE    },    // SFI_LABEL
     { CPFS_DISPLAY_IN_BOTH,            CPFIS_NONE    },    // SFI_LARGE_TEXT
-    { CPFS_DISPLAY_IN_SELECTED_TILE,   CPFIS_FOCUSED },    // SFI_PASSWORD
 };
 
 // Field descriptors for unlock and logon.
@@ -57,7 +55,6 @@ static const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR s_rgCredProvFieldDescriptors[]
     { SFI_TILEIMAGE,         CPFT_TILE_IMAGE,    L"Image",                      CPFG_CREDENTIAL_PROVIDER_LOGO  },
     { SFI_LABEL,             CPFT_SMALL_TEXT,    L"Tooltip",                    CPFG_CREDENTIAL_PROVIDER_LABEL },
     { SFI_LARGE_TEXT,        CPFT_LARGE_TEXT,    L"Sample Credential Provider"                                 },
-    { SFI_PASSWORD,          CPFT_PASSWORD_TEXT, L"Password text"                                              },
 };
 
 static const PWSTR s_rgComboBoxStrings[] =

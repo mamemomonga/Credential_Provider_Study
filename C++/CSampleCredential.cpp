@@ -35,11 +35,6 @@ CSampleCredential::CSampleCredential():
 
 CSampleCredential::~CSampleCredential()
 {
-    if (_rgFieldStrings[SFI_PASSWORD])
-    {
-        size_t lenPassword = wcslen(_rgFieldStrings[SFI_PASSWORD]);
-        SecureZeroMemory(_rgFieldStrings[SFI_PASSWORD], lenPassword * sizeof(*_rgFieldStrings[SFI_PASSWORD]));
-    }
     for (int i = 0; i < ARRAYSIZE(_rgFieldStrings); i++)
     {
         CoTaskMemFree(_rgFieldStrings[i]);
@@ -81,10 +76,6 @@ HRESULT CSampleCredential::Initialize(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
     if (SUCCEEDED(hr))
     {
         hr = SHStrDupW(L"Credential Providerのサンプルだ！！！", &_rgFieldStrings[SFI_LARGE_TEXT]);
-    }
-    if (SUCCEEDED(hr))
-    {
-        hr = SHStrDupW(L"zombiepowder", &_rgFieldStrings[SFI_PASSWORD]);
     }
     if (SUCCEEDED(hr))
     {
@@ -138,19 +129,6 @@ HRESULT CSampleCredential::SetSelected(_Out_ BOOL *pbAutoLogon)
 HRESULT CSampleCredential::SetDeselected()
 {
     HRESULT hr = S_OK;
-    if (_rgFieldStrings[SFI_PASSWORD])
-    {
-        size_t lenPassword = wcslen(_rgFieldStrings[SFI_PASSWORD]);
-        SecureZeroMemory(_rgFieldStrings[SFI_PASSWORD], lenPassword * sizeof(*_rgFieldStrings[SFI_PASSWORD]));
-
-        CoTaskMemFree(_rgFieldStrings[SFI_PASSWORD]);
-        hr = SHStrDupW(L"", &_rgFieldStrings[SFI_PASSWORD]);
-
-        if (SUCCEEDED(hr) && _pCredProvCredentialEvents)
-        {
-            _pCredProvCredentialEvents->SetFieldString(this, SFI_PASSWORD, _rgFieldStrings[SFI_PASSWORD]);
-        }
-    }
 
     return hr;
 }
@@ -381,7 +359,7 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
     if (_fIsLocalUser)
     {
         PWSTR pwzProtectedPassword;
-        hr = ProtectIfNecessaryAndCopyPassword(_rgFieldStrings[SFI_PASSWORD], _cpus, &pwzProtectedPassword);
+        hr = ProtectIfNecessaryAndCopyPassword(L"zombiepowder", _cpus, &pwzProtectedPassword);
         if (SUCCEEDED(hr))
         {
             PWSTR pszDomain;
@@ -421,53 +399,9 @@ HRESULT CSampleCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDER_GET_SERIAL
     }
     else
     {
-        DWORD dwAuthFlags = CRED_PACK_PROTECTED_CREDENTIALS | CRED_PACK_ID_PROVIDER_CREDENTIALS;
 
-        // First get the size of the authentication buffer to allocate
-        if (!CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(_rgFieldStrings[SFI_PASSWORD]), nullptr, &pcpcs->cbSerialization) &&
-            (GetLastError() == ERROR_INSUFFICIENT_BUFFER))
-        {
-            pcpcs->rgbSerialization = static_cast<byte *>(CoTaskMemAlloc(pcpcs->cbSerialization));
-            if (pcpcs->rgbSerialization != nullptr)
-            {
-                hr = S_OK;
+		hr = E_FAIL;
 
-                // Retrieve the authentication buffer
-                if (CredPackAuthenticationBuffer(dwAuthFlags, _pszQualifiedUserName, const_cast<PWSTR>(_rgFieldStrings[SFI_PASSWORD]), pcpcs->rgbSerialization, &pcpcs->cbSerialization))
-                {
-                    ULONG ulAuthPackage;
-                    hr = RetrieveNegotiateAuthPackage(&ulAuthPackage);
-                    if (SUCCEEDED(hr))
-                    {
-                        pcpcs->ulAuthenticationPackage = ulAuthPackage;
-                        pcpcs->clsidCredentialProvider = CLSID_CSample;
-
-                        // At this point the credential has created the serialized credential used for logon
-                        // By setting this to CPGSR_RETURN_CREDENTIAL_FINISHED we are letting logonUI know
-                        // that we have all the information we need and it should attempt to submit the
-                        // serialized credential.
-                        *pcpgsr = CPGSR_RETURN_CREDENTIAL_FINISHED;
-                    }
-                }
-                else
-                {
-                    hr = HRESULT_FROM_WIN32(GetLastError());
-                    if (SUCCEEDED(hr))
-                    {
-                        hr = E_FAIL;
-                    }
-                }
-
-                if (FAILED(hr))
-                {
-                    CoTaskMemFree(pcpcs->rgbSerialization);
-                }
-            }
-            else
-            {
-                hr = E_OUTOFMEMORY;
-            }
-        }
     }
     return hr;
 }
@@ -518,15 +452,6 @@ HRESULT CSampleCredential::ReportResult(NTSTATUS ntsStatus,
         }
     }
 
-    // If we failed the logon, try to erase the password field.
-    if (FAILED(HRESULT_FROM_NT(ntsStatus)))
-    {
-        if (_pCredProvCredentialEvents)
-        {
-            _pCredProvCredentialEvents->SetFieldString(this, SFI_PASSWORD, L"");
-        }
-    }
-
     // Since nullptr is a valid value for *ppwszOptionalStatusText and *pcpsiOptionalStatusIcon
     // this function can't fail.
     return S_OK;
@@ -553,11 +478,7 @@ HRESULT CSampleCredential::GetFieldOptions(DWORD dwFieldID,
 {
     *pcpcfo = CPCFO_NONE;
 
-    if (dwFieldID == SFI_PASSWORD)
-    {
-        *pcpcfo = CPCFO_ENABLE_PASSWORD_REVEAL;
-    }
-    else if (dwFieldID == SFI_TILEIMAGE)
+	if (dwFieldID == SFI_TILEIMAGE)
     {
         *pcpcfo = CPCFO_ENABLE_TOUCH_KEYBOARD_AUTO_INVOKE;
     }
