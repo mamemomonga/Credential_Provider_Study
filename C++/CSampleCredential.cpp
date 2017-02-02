@@ -88,14 +88,6 @@ HRESULT CSampleCredential::Initialize(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
     }
     if (SUCCEEDED(hr))
     {
-        hr = SHStrDupW(L"Submit", &_rgFieldStrings[SFI_SUBMIT_BUTTON]);
-    }
-    if (SUCCEEDED(hr))
-    {
-        hr = SHStrDupW(L"Launch helper window", &_rgFieldStrings[SFI_LAUNCHWINDOW_LINK]);
-    }
-    if (SUCCEEDED(hr))
-    {
         hr = pcpUser->GetStringValue(PKEY_Identity_QualifiedUserName, &_pszQualifiedUserName);
     }
 
@@ -240,18 +232,7 @@ HRESULT CSampleCredential::GetBitmapValue(DWORD dwFieldID, _Outptr_result_nullon
 HRESULT CSampleCredential::GetSubmitButtonValue(DWORD dwFieldID, _Out_ DWORD *pdwAdjacentTo)
 {
     HRESULT hr;
-
-    if (SFI_SUBMIT_BUTTON == dwFieldID)
-    {
-        // pdwAdjacentTo is a pointer to the fieldID you want the submit button to
-        // appear next to.
-        *pdwAdjacentTo = SFI_PASSWORD;
-        hr = S_OK;
-    }
-    else
-    {
-        hr = E_INVALIDARG;
-    }
+    hr = E_INVALIDARG;
     return hr;
 }
 
@@ -377,35 +358,7 @@ HRESULT CSampleCredential::SetComboBoxSelectedValue(DWORD dwFieldID, DWORD dwSel
 HRESULT CSampleCredential::CommandLinkClicked(DWORD dwFieldID)
 {
     HRESULT hr = S_OK;
-
-    CREDENTIAL_PROVIDER_FIELD_STATE cpfsShow = CPFS_HIDDEN;
-
-    // Validate parameter.
-    if (dwFieldID < ARRAYSIZE(_rgCredProvFieldDescriptors) &&
-        (CPFT_COMMAND_LINK == _rgCredProvFieldDescriptors[dwFieldID].cpft))
-    {
-        HWND hwndOwner = nullptr;
-        switch (dwFieldID)
-        {
-        case SFI_LAUNCHWINDOW_LINK:
-            if (_pCredProvCredentialEvents)
-            {
-                _pCredProvCredentialEvents->OnCreatingWindow(&hwndOwner);
-            }
-
-            // Pop a messagebox indicating the click.
-            ::MessageBox(hwndOwner, L"Command link clicked", L"Click!", 0);
-            break;
-        default:
-            hr = E_INVALIDARG;
-        }
-
-    }
-    else
-    {
-        hr = E_INVALIDARG;
-    }
-
+    hr = E_INVALIDARG;
     return hr;
 }
 

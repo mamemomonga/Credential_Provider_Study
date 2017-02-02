@@ -22,9 +22,7 @@ enum SAMPLE_FIELD_ID
     SFI_LABEL             = 1,
     SFI_LARGE_TEXT        = 2,
     SFI_PASSWORD          = 3,
-    SFI_SUBMIT_BUTTON     = 4,
-    SFI_LAUNCHWINDOW_LINK = 5,
-    SFI_NUM_FIELDS        = 6,  // Note: if new fields are added, keep NUM_FIELDS last.  This is used as a count of the number of fields
+    SFI_NUM_FIELDS        = 4,  // Note: if new fields are added, keep NUM_FIELDS last.  This is used as a count of the number of fields
 };
 
 // The first value indicates when the tile is displayed (selected, not selected)
@@ -48,8 +46,6 @@ static const FIELD_STATE_PAIR s_rgFieldStatePairs[] =
     { CPFS_HIDDEN,                     CPFIS_NONE    },    // SFI_LABEL
     { CPFS_DISPLAY_IN_BOTH,            CPFIS_NONE    },    // SFI_LARGE_TEXT
     { CPFS_DISPLAY_IN_SELECTED_TILE,   CPFIS_FOCUSED },    // SFI_PASSWORD
-    { CPFS_DISPLAY_IN_SELECTED_TILE,   CPFIS_NONE    },    // SFI_SUBMIT_BUTTON
-    { CPFS_DISPLAY_IN_SELECTED_TILE,   CPFIS_NONE    },    // SFI_LAUNCHWINDOW_LINK
 };
 
 // Field descriptors for unlock and logon.
@@ -62,8 +58,6 @@ static const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR s_rgCredProvFieldDescriptors[]
     { SFI_LABEL,             CPFT_SMALL_TEXT,    L"Tooltip",                    CPFG_CREDENTIAL_PROVIDER_LABEL },
     { SFI_LARGE_TEXT,        CPFT_LARGE_TEXT,    L"Sample Credential Provider"                                 },
     { SFI_PASSWORD,          CPFT_PASSWORD_TEXT, L"Password text"                                              },
-    { SFI_SUBMIT_BUTTON,     CPFT_SUBMIT_BUTTON, L"Submit"                                                     },
-    { SFI_LAUNCHWINDOW_LINK, CPFT_COMMAND_LINK,  L"Launch helper window"                                       },
 };
 
 static const PWSTR s_rgComboBoxStrings[] =
